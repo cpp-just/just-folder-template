@@ -7,7 +7,7 @@ function get_project_name()
     return project_name
 end
 
-function read_file_extensions()
+function get_source_files()
     local extensions = {}
     for line in io.lines("file_extensions") do
         table.insert(extensions, "../src/**." .. line)
@@ -15,33 +15,33 @@ function read_file_extensions()
     return extensions
 end
 
-function get_package_lib_paths()
+function get_lib_dirs()
     local lib_paths = {}
-    for folder in lfs.dir("packages") do
-        if folder ~= "." and folder ~= ".." then
-            local lib_path = "packages/" .. folder .. "/lib"
-            table.insert(lib_paths, lib_path)
-        end
+    local p = io.popen('[ -d packages ] && ls -1 packages')
+    for folder in p:lines() do
+        local lib_path = "packages/" .. folder .. "/lib"
+        table.insert(lib_paths, lib_path)
     end
+    p:close()
     return lib_paths
 end
 
 function get_links()
     local files = {}
-    for _, lib_path in ipairs(get_package_lib_paths()) do
-        for file in lfs.dir(lib_path) do
-            if file ~= "." and file ~= ".." then
-                local filename = file:match("(.+)%..+")
-                table.insert(files, filename)
-            end
+    for _, lib_path in ipairs(get_lib_dirs()) do
+        local p = io.popen('ls -1 ' .. lib_path)
+        for file in p:lines() do
+            local filename = file:match("(.+)%..+")
+            table.insert(files, filename)
         end
+        p:close()
     end
     return files
 end
 
 return {
     get_project_name = get_project_name,
-    read_file_extensions = read_file_extensions,
-    get_package_lib_paths = get_package_lib_paths,
+    get_source_files = get_source_files,
+    get_lib_dirs = get_lib_dirs,
     get_links = get_links
 }
