@@ -1,6 +1,10 @@
 function get_project_name()
-    local metadata = require "json".decode(io.open("metadata.json", "r"):read("*all"))
-    return metadata.ProjectName
+    local file = io.open("metadata.json", "r")
+    local content = file:read("*all")
+    file:close()
+    
+    local project_name = content:match('"ProjectName"%s*:%s*"(.-)"')
+    return project_name
 end
 
 function read_file_extensions()
