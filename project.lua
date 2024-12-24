@@ -13,6 +13,7 @@ project(get_project_name())
 	files(get_source_files())
 	libdirs(get_lib_dirs())
 	links(get_links())
+	includedirs(get_include_dirs())
 
 	filter "configurations:Debug"
 		runtime "Debug"

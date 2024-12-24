@@ -31,7 +31,7 @@ function get_links()
     for _, lib_path in ipairs(get_lib_dirs()) do
         local p = io.popen('ls -1 ' .. lib_path)
         for file in p:lines() do
-            local filename = file:match("(.+)%..+")
+            local filename = file:match("lib(.+)%..+")
             table.insert(files, filename)
         end
         p:close()
@@ -39,9 +39,21 @@ function get_links()
     return files
 end
 
+function get_include_dirs()
+    local include_dirs = {}
+    local p = io.popen('[ -d packages ] && ls -1 packages')
+    for folder in p:lines() do
+        local lib_path = "packages/" .. folder .. "/include"
+        table.insert(include_dirs, lib_path)
+    end
+    p:close()
+    return include_dirs
+end
+
 return {
     get_project_name = get_project_name,
     get_source_files = get_source_files,
     get_lib_dirs = get_lib_dirs,
-    get_links = get_links
+    get_links = get_links,
+    get_include_dirs = get_include_dirs
 }
